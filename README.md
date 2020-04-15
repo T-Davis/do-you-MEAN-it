@@ -1,27 +1,48 @@
-# DoYouMEANIt
+# Do you MEAN it?
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
+Backend engineer brushing up on frontend tech, we're going to build a MEAN app!
 
-## Development server
+If you're not familiar with that acronym, we're talking:
+* MongoDB - NoSQL database
+* Express.js - modular web application framework
+* Angular - also a web application framework, we'll be using it client side
+* Node.js - application runtime
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Getting Started
 
-## Code scaffolding
+### Prerequisites
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+Download and run [Node.js](https://nodejs.org/en/)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Install [Angular CLI](https://cli.angular.io/) `npm install -g @angular/cli`
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+### Build
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Further help
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Running the tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io)
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/)
+
+## Built With
+
+[IntelliJ IDEA](https://www.jetbrains.com/idea/) - My preferred IDE
+
+[Google Chrome](https://www.google.com/chrome/) - Because Chrome (but any modern browser should work)
+
+## Contributing
+
+If you'd like to, by all means, submit a pull request
+## Acknowledgments
+
+All the teachers, creators, authors, and engineers 🙏👏
+
+[Academind](https://academind.com/) - Great online courses!
+
