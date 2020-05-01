@@ -1,3 +1,5 @@
+require("dotenv").config()
+require("console-stamp")(console);
 const express = require("express");
 const bodyParser = require("body-parser");
 
