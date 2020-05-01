@@ -2,10 +2,19 @@ require("dotenv").config()
 require("console-stamp")(console);
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const Post = require("./models/post")
 
 const app = express();
+
+mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+  .then(() => {
+    console.log("Connection to DB successful")
+  })
+  .catch(() => {
+    console.log("Connection to DB failed")
+  });
 
 app.use(bodyParser.json());
 
