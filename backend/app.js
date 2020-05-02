@@ -10,11 +10,9 @@ const app = express();
 
 mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
-    console.log("Connection to DB successful")
-  })
+    console.log("Connection to DB successful")})
   .catch(() => {
-    console.log("Connection to DB failed")
-  });
+    console.log("Connection to DB failed")});
 
 app.use(bodyParser.json());
 
@@ -48,6 +46,13 @@ app.get("/api/posts", (req, res) => {
       message: "posts fetched successfully",
       posts: documents
     });
+  });
+});
+
+app.delete("/api/posts:id", (req, res) => {
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    console.log(result);
+    res.status(200).json({message: "Post deleted"});
   });
 });
 
