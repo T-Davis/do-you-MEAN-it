@@ -10,9 +10,11 @@ const app = express();
 
 mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
-    console.log("Connection to DB successful")})
+    console.log("Connection to DB successful")
+  })
   .catch(() => {
-    console.log("Connection to DB failed")});
+    console.log("Connection to DB failed")
+  });
 
 app.use(bodyParser.json());
 
@@ -34,9 +36,11 @@ app.post("/api/posts", (req, res) => {
     title: req.body.title,
     content: req.body.content
   });
-  post.save();
-  res.status(201).json({
-    message: "Post added successfully"
+  post.save().then(result => {
+    res.status(201).json({
+      message: "Post added successfully",
+      postId: result._id
+    });
   });
 });
 
