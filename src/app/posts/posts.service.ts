@@ -7,6 +7,7 @@ import {Post} from './post';
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
+  private post: Post;
   private posts: Post[] = [];
   private postsUpdate = new Subject<Post[]>();
   private url = 'http://localhost:3000/api/posts';
@@ -35,6 +36,10 @@ export class PostsService {
 
   getPostsUpdateListener() {
     return this.postsUpdate.asObservable();
+  }
+
+  getLocalPost(id: string) {
+    return this.posts.find(post => (post.id === id));
   }
 
   getPost(id: string) {
