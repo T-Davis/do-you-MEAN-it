@@ -65,6 +65,7 @@ export class PostsService {
         post.id = res.postId;
         this.posts.push(post);
         this.postsUpdate.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
