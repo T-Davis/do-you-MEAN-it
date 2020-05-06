@@ -10,7 +10,7 @@ export class PostsService {
   private post: Post;
   private posts: Post[] = [];
   private postsUpdate = new Subject<Post[]>();
-  private url = 'http://localhost:3000/api/posts';
+  private url = 'http://localhost:3000/api/posts/';
 
   constructor(private http: HttpClient, private router: Router) {
   }
@@ -43,7 +43,18 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string; title: string; content: string }>(this.url + id);
+    return this.http
+      .get<{ post: any }>(this.url + id)
+      .pipe(
+        map((postData) => {
+          return postData.post.map(post => {
+            return {
+              id: post._id,
+              title: post.title,
+              content: post.content
+            };
+          });
+        }));
   }
 
   addPost(title: string, content: string) {
