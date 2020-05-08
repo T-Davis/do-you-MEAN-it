@@ -11,8 +11,11 @@
         required
         type="text">
       <mat-error *ngIf="title.invalid">Please enter a title</mat-error>
-
     </mat-form-field>
+    <div>
+      <button mat-stroked-button="button" (click)="filePicker.click()">Pick image</button>
+      <input type="file" #filePicker>
+    </div>
     <mat-form-field>
       <textarea
         #content="ngModel"
