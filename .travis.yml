@@ -1,0 +1,9 @@
+language: node_js
+branches:
+  only:
+    - master
+before_script:
+  - npm install -g @angular/cli
+script:
+  - ng lint
+  - ng build --prod --base-href https://t-davis.github.io/do-you-MEAN-it/
