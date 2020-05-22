@@ -1,5 +1,5 @@
 <mat-card>
-  <form [formGroup] = "form" (submit)="onSavePost()">
+  <form [formGroup]="form" (submit)="onSavePost()">
     <mat-form-field>
       <input
         matInput
@@ -10,7 +10,7 @@
     </mat-form-field>
     <div>
       <button mat-stroked-button="button" (click)="filePicker.click()">Pick image</button>
-      <input type="file" #filePicker>
+      <input type="file" #filePicker (change)="onImagePicked($event)">
     </div>
     <mat-form-field>
       <textarea
