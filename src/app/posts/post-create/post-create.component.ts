@@ -12,6 +12,7 @@ import {Post} from '../post';
 export class PostCreateComponent implements OnInit {
   post: Post;
   private isNewPost = true;
+  imagePreview: string;
   form: FormGroup;
 
   constructor(public postsService: PostsService, public route: ActivatedRoute) {
@@ -44,6 +45,11 @@ export class PostCreateComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files[0];
     this.form.patchValue({image: file});
     this.form.get('image').updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
   onSavePost() {
