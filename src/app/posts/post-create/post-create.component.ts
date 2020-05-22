@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NgForm} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {PostsService} from '../posts.service';
 import {Post} from '../post';
@@ -12,32 +12,44 @@ import {Post} from '../post';
 export class PostCreateComponent implements OnInit {
   post: Post;
   private isNewPost = true;
+  form: FormGroup;
 
   constructor(public postsService: PostsService, public route: ActivatedRoute) {
   }
 
   ngOnInit() {
+    this.form = new FormGroup({
+      title: new FormControl(null, {
+        validators: [Validators.required, Validators.minLength(3)]
+      }),
+      content: new FormControl(null, {
+        validators: [Validators.required, Validators.minLength(3)]
+      })
+    });
     this.route.paramMap.subscribe((paramMap) => {
       if (paramMap.has('postId')) {
         this.isNewPost = false;
         this.post = this.postsService.getLocalPost(paramMap.get('postId'));
+        this.form.setValue({
+          title: this.post.title, content: this.post.content
+        });
       }
     });
   }
 
-  onSavePost(form: NgForm) {
-    if (form.invalid) {
+  onSavePost() {
+    if (this.form.invalid) {
       return;
     }
     if (this.isNewPost) {
-      this.postsService.addPost(form.value.title, form.value.content);
+      this.postsService.addPost(this.form.value.title, this.form.value.content);
     } else {
       this.postsService.updatePost({
         id: this.post.id,
-        title: form.value.title,
-        content: form.value.content
+        title: this.form.value.title,
+        content: this.form.value.content
       });
     }
-    form.resetForm();
+    this.form.reset();
   }
 }
