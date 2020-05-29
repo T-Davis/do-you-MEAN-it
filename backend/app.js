@@ -3,12 +3,14 @@ require("console-stamp")(console);
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const path = require("path");
 
 const postsRoutes = require("./routes/posts");
 
 const app = express();
 
-mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose
+  .connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
     console.log("Connection to DB successful")
   })
@@ -17,6 +19,8 @@ mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology:
   });
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}))
+app.use("/images/", express.static(path.join("backend/images")));
 
 app.use((req, res, next) => {
   res.setHeader(
