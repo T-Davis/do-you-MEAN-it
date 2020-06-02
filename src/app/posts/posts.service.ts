@@ -51,18 +51,27 @@ export class PostsService {
             return {
               id: post._id,
               title: post.title,
-              content: post.content
+              content: post.content,
+              imagePath: post.imagePath
             };
           });
         }));
   }
 
-  addPost(title: string, content: string) {
-    const post: Post = {id: null, title, content};
+  addPost(title: string, content: string, image: File) {
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, title);
     this.http
-      .post<{ message: string, postId: string }>(this.url, post)
+      .post<{ message: string, post: Post }>(this.url, postData)
       .subscribe(res => {
-        post.id = res.postId;
+        const post: Post = {
+          id: res.post.id,
+          title,
+          content,
+          imagePath: res.post.imagePath
+        };
         this.posts.push(post);
         this.postsUpdate.next([...this.posts]);
         this.router.navigate(['/']);
