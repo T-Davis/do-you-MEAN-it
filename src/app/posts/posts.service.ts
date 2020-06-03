@@ -7,9 +7,8 @@ import {Post} from './post';
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
-  private post: Post;
   private posts: Post[] = [];
-  private postsUpdate = new Subject<Post[]>();
+  private postsUpdated = new Subject<Post[]>();
   private url = 'http://localhost:3000/api/posts/';
 
   constructor(private http: HttpClient, private router: Router) {
@@ -17,45 +16,33 @@ export class PostsService {
 
   getPosts() {
     this.http
-      .get<{ message: string, posts: any }>(this.url)
+      .get<{ message: string; posts: any }>(this.url)
       .pipe(
-        map((postData) => {
+        map(postData => {
           return postData.posts.map(post => {
             return {
-              id: post._id,
-              title: post.title,
-              content: post.content
-            };
-          });
-        }))
-      .subscribe((transformedPosts) => {
-        this.posts = transformedPosts;
-        this.postsUpdate.next([...this.posts]);
-      });
-  }
-
-  getPostsUpdateListener() {
-    return this.postsUpdate.asObservable();
-  }
-
-  getLocalPost(id: string) {
-    return this.posts.find(post => (post.id === id));
-  }
-
-  getPost(id: string) {
-    return this.http
-      .get<{ post: any }>(this.url + id)
-      .pipe(
-        map((postData) => {
-          return postData.post.map(post => {
-            return {
-              id: post._id,
               title: post.title,
               content: post.content,
+              id: post._id,
               imagePath: post.imagePath
             };
           });
-        }));
+        })
+      )
+      .subscribe(transformedPosts => {
+        this.posts = transformedPosts;
+        this.postsUpdated.next([...this.posts]);
+      });
+  }
+
+  getPostUpdateListener() {
+    return this.postsUpdated.asObservable();
+  }
+
+  getPost(id: string) {
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(
+      this.url + id
+    );
   }
 
   addPost(title: string, content: string, image: File) {
@@ -64,7 +51,7 @@ export class PostsService {
     postData.append('content', content);
     postData.append('image', image, title);
     this.http
-      .post<{ message: string, post: Post }>(this.url, postData)
+      .post<{ message: string; post: Post }>(this.url, postData)
       .subscribe(res => {
         const post: Post = {
           id: res.post.id,
@@ -73,18 +60,40 @@ export class PostsService {
           imagePath: res.post.imagePath
         };
         this.posts.push(post);
-        this.postsUpdate.next([...this.posts]);
+        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
-  updatePost(post: Post) {
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    let postData: Post | FormData;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append('id', id);
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, title);
+    } else {
+      postData = {
+        id,
+        title,
+        content,
+        imagePath: image
+      };
+    }
     this.http
-      .put(this.url + post.id, post)
+      .put(this.url + id, postData)
       .subscribe(() => {
-        const postIndex = this.posts.findIndex(p => p.id === post.id);
-        this.posts[postIndex] = post;
-        this.postsUpdate.next([...this.posts]);
+        const updatedPosts = [...this.posts];
+        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
+        updatedPosts[oldPostIndex] = {
+          id,
+          title,
+          content,
+          imagePath: ''
+        };
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
@@ -94,7 +103,7 @@ export class PostsService {
       .delete(this.url + postId)
       .subscribe(() => {
         this.posts = this.posts.filter(post => post.id !== postId);
-        this.postsUpdate.next([...this.posts]);
+        this.postsUpdated.next([...this.posts]);
       });
   }
 }
