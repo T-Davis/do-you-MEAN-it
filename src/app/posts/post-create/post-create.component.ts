@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, ParamMap} from '@angular/router';
 import {PostsService} from '../posts.service';
 import {Post} from '../post';
 import {mimeType} from './mime-type.validator';
@@ -12,9 +12,11 @@ import {mimeType} from './mime-type.validator';
 })
 export class PostCreateComponent implements OnInit {
   post: Post;
-  private isNewPost = true;
-  imagePreview: string;
+  isLoading = false;
   form: FormGroup;
+  imagePreview: string;
+  private isNewPost = true;
+  private postId: string;
 
   constructor(public postsService: PostsService, public route: ActivatedRoute) {
   }
@@ -32,13 +34,29 @@ export class PostCreateComponent implements OnInit {
         asyncValidators: [mimeType]
       })
     });
-    this.route.paramMap.subscribe((paramMap) => {
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
         this.isNewPost = false;
-        this.post = this.postsService.getLocalPost(paramMap.get('postId'));
-        this.form.setValue({
-          title: this.post.title, content: this.post.content
+        this.postId = paramMap.get('postId');
+        this.isLoading = true;
+        this.postsService.getPost(this.postId).subscribe(postData => {
+          this.isLoading = false;
+          this.post = {
+            id: postData._id,
+            title: postData.title,
+            content: postData.content,
+            imagePath: postData.imagePath
+          };
+          this.form.setValue({
+            title: this.post.title,
+            content: this.post.content,
+            image: this.post.imagePath
+          });
+          this.imagePreview = this.post.imagePath;
         });
+      } else {
+        this.isNewPost = true;
+        this.postId = null;
       }
     });
   }
@@ -58,15 +76,20 @@ export class PostCreateComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
+    this.isLoading = true;
     if (this.isNewPost) {
-      this.postsService.addPost(this.form.value.title, this.form.value.content, this.form.value.image);
+      this.postsService.addPost(
+        this.form.value.title,
+        this.form.value.content,
+        this.form.value.image
+      );
     } else {
-      this.postsService.updatePost({
-        id: this.post.id,
-        title: this.form.value.title,
-        content: this.form.value.content,
-        imagePath: null
-      });
+      this.postsService.updatePost(
+        this.postId,
+        this.form.value.title,
+        this.form.value.content,
+        this.form.value.image
+      );
     }
     this.form.reset();
   }
