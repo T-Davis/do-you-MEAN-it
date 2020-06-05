@@ -80,7 +80,7 @@ router.get("", (req, res) => {
   }
   postQuery.then(posts => {
     fetchedPosts = posts;
-    return Post.count();
+    return Post.countDocuments();
   }).then(count => {
     res.status(200).json({
       posts: fetchedPosts,
