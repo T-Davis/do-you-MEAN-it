@@ -69,9 +69,22 @@ router.put("/:id", multer({storage: storage}).single("image"),
 );
 
 router.get("", (req, res) => {
-  Post.find().then(posts => {
+  const pageSize = +req.query.pageSize;
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
+  postQuery.then(posts => {
+    fetchedPosts = posts;
+    return Post.count();
+  }).then(count => {
     res.status(200).json({
-      posts: posts
+      posts: fetchedPosts,
+      postsCount: count
     });
   });
 });
