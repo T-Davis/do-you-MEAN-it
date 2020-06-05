@@ -46,8 +46,7 @@ export class PostsService {
 
   getPost(id: string) {
     return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(
-      this.url + id
-    );
+      this.url + id);
   }
 
   addPost(title: string, content: string, image: File) {
@@ -57,15 +56,7 @@ export class PostsService {
     postData.append('image', image, title);
     this.http
       .post<{ message: string; post: Post }>(this.url, postData)
-      .subscribe(res => {
-        const post: Post = {
-          id: res.post.id,
-          title,
-          content,
-          imagePath: res.post.imagePath
-        };
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
+      .subscribe(() => {
         this.router.navigate(['/']);
       });
   }
@@ -89,26 +80,12 @@ export class PostsService {
     this.http
       .put(this.url + id, postData)
       .subscribe(() => {
-        const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
-        updatedPosts[oldPostIndex] = {
-          id,
-          title,
-          content,
-          imagePath: ''
-        };
-        this.posts = updatedPosts;
-        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: string) {
-    this.http
-      .delete(this.url + postId)
-      .subscribe(() => {
-        this.posts = this.posts.filter(post => post.id !== postId);
-        this.postsUpdated.next([...this.posts]);
-      });
+    return this.http
+      .delete(this.url + postId);
   }
 }
